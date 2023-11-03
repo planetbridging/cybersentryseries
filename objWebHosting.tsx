@@ -31,19 +31,6 @@ export class objWebHosting {
     app.use(errorHandler);
     //app.use(express.static(path.join(__dirname, "public")));
 
-    this.dynamicCacheApi("/cvelookup", this.cache.lstCve);
-    this.dynamicCacheApi("/cpelookup", this.cache.lstUniqCpe);
-    this.dynamicCacheApi("/cpetocvelookup", this.cache.lstCpeToCve);
-    this.dynamicCacheApi("/searchsploitlookup", this.cache.lstSearchsploit);
-    this.dynamicCacheApi(
-      "/cvetoexpliotlookup",
-      this.cache.lstCveToSearchsploit
-    );
-    this.dynamicCacheApi(
-      "/cvetometasploitlookup",
-      this.cache.lstCveToMetasploit
-    );
-
     this.loadPublicIntoCache();
 
     app.listen(this.port, () => {
@@ -51,40 +38,7 @@ export class objWebHosting {
     });
   }
 
-  dynamicCacheApi(path) {
-    app.get(path, (req, res) => {
-      var json = {
-        path: path,
-        search: "",
-        found: "",
-        possible: [],
-      };
-      if (req.query.search) {
-        const searchQuery = req.query.search;
-        json.search = searchQuery;
-        if (this.cache.has(searchQuery)) {
-          json.found = this.cache.get(searchQuery);
-        } else {
-          var possible = [];
-          // var count = 0;
-          for (const [key, value] of this.cache.entries()) {
-            //console.log(`Key: ${key}, Value: ${value}`);
-            if (key.includes(searchQuery)) {
-              possible.push([key, value]);
-            }
-            if (possible.length >= 100) {
-              break;
-            }
-            // count += 1;
-          }
-
-          json.possible = possible;
-        }
-      }
-
-      res.send(json);
-    });
-  }
+  dynamicCacheApi(path, tmpCache, req, res) {}
 
   async loadPublicIntoCache() {
     const filesMap = oLoadFiles.loadFilesFromDirectory(
@@ -118,12 +72,71 @@ export class objWebHosting {
         return;
       }
       var pageFound = false;
+      var tmpCache = null;
 
       switch (req.path) {
         case "/":
           pageFound = true;
+          break;
+        case "/cvelookup":
+          pageFound = true;
+          tmpCache = this.cache.lstCve;
+          break;
+        case "/cpelookup":
+          pageFound = true;
+          tmpCache = this.cache.lstUniqCpe;
+          break;
+        case "/cpetocvelookup":
+          pageFound = true;
+          tmpCache = this.cache.lstCpeToCve;
+          break;
+        case "/searchsploitlookup":
+          pageFound = true;
+          tmpCache = this.cache.lstSearchsploit;
 
           break;
+        case "/cvetoexpliotlookup":
+          pageFound = true;
+          tmpCache = this.cache.lstCveToSearchsploit;
+          break;
+        case "/cvetometasploitlookup":
+          pageFound = true;
+          tmpCache = this.cache.lstCveToMetasploit;
+          break;
+      }
+
+      if (tmpCache != null) {
+        var json = {
+          path: req.path,
+          search: "",
+          found: "",
+          possible: [],
+        };
+        if (req.query.search) {
+          const searchQuery = req.query.search;
+          json.search = searchQuery;
+          if (tmpCache.has(searchQuery)) {
+            json.found = tmpCache.get(searchQuery);
+          } else {
+            var possible = [];
+            // var count = 0;
+            for (const [key, value] of tmpCache.entries()) {
+              //console.log(`Key: ${key}, Value: ${value}`);
+              if (key.includes(searchQuery)) {
+                possible.push([key, value]);
+              }
+              if (possible.length >= 100) {
+                break;
+              }
+              // count += 1;
+            }
+
+            json.possible = possible;
+          }
+        }
+
+        res.send(json);
+        return;
       }
 
       try {

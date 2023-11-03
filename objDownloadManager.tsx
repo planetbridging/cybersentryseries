@@ -158,7 +158,7 @@ export class objDownloadManager {
 
       if (fs.existsSync(filePath)) {
         console.log(`Processing ${fileName}`);
-        processCVEData(year);
+        this.processCVEData(year);
       } else {
         console.log(`${fileName} does not exist.`);
       }

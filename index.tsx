@@ -9,7 +9,9 @@ import { objDownloadManager } from "./objDownloadManager";
 
 var oDownloadManager = new objDownloadManager();
 
+var cache = null;
 (async () => {
   console.log("welcome to planetbridging");
-  await oDownloadManager.startup();
+  cache = await oDownloadManager.startup();
+  oDownloadManager = null;
 })();

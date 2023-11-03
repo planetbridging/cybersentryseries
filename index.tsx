@@ -1,17 +1,11 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const { parseString } = require("xml2js");
-const path = require("path");
-const app = express();
 //require("dotenv").config();
 
-import { objDownloadManager } from "./objDownloadManager";
+import { objWebHosting } from "./objWebHosting";
 
-var oDownloadManager = new objDownloadManager();
-
-var cache = null;
 (async () => {
   console.log("welcome to planetbridging");
-  cache = await oDownloadManager.startup();
-  oDownloadManager = null;
+
+  var oWebHosting = new objWebHosting(8123);
+  await oWebHosting.buildCache();
+  await oWebHosting.startHosting();
 })();

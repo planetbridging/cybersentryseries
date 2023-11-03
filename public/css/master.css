@@ -1,0 +1,37 @@
+#subroot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1; /* This ensures it's behind everything else */
+  background-color: rgba(0, 0, 0, 0.5); /* Optional: just to visualize it */
+}
+
+.menuBtn {
+  top: 10px;
+  height: 40px; /* Define your desired height */
+  padding: 5px;
+}
+
+#geoLocationToMap {
+  height: 90%;
+}
+
+#particles-js {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  background-color: #000;
+  z-index: -1;
+}
+
+.glassBox {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+body {
+  background-color: transparent;
+}

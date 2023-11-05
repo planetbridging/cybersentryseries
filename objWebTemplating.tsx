@@ -1,4 +1,5 @@
 import React from "react";
+import { objSemanticBuilder } from "./objSemanticBuilder";
 
 export class objWebTemplating extends React.Component {
   constructor(props) {
@@ -7,6 +8,12 @@ export class objWebTemplating extends React.Component {
     this.state = {
       items: ["Item 1", "Item 2", "Item 3", "Item 4"],
     };
+    var oSemBuild = new objSemanticBuilder();
+    this.oSemBuild = oSemBuild;
+  }
+
+  setStats(cacheStats) {
+    this.cacheStats = cacheStats;
   }
 
   renderList() {
@@ -20,7 +27,22 @@ export class objWebTemplating extends React.Component {
     return <ul>{listItems}</ul>;
   }
 
-  render() {
+  renderCachStats(path) {
+    var showStatsTbl = <></>;
+    if (path == "/") {
+      showStatsTbl = (
+        <div class="ui container">
+          <h1 class="ui header">Show stats of maps</h1>
+          {this.oSemBuild.renderSimpleJsonToTable(this.cacheStats, "inverted")}
+        </div>
+      );
+    }
+    return showStatsTbl;
+  }
+
+  render(path) {
+    var showStatsTbl = this.renderCachStats(path);
+
     return (
       <body>
         <div class="ui top fixed menu inverted fluid six item">
@@ -32,12 +54,7 @@ export class objWebTemplating extends React.Component {
           <a class="item">go get galaxy</a>
         </div>
         <div id="main" class="content scrollable">
-          <div class="ui container">
-            <h1 class="ui header">Article Title</h1>
-            <p>Here goes the scrolling content of the web page...</p>
-
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
-          </div>
+          <div id="content">{showStatsTbl}</div>
         </div>
         <div class="ui bottom fixed menu inverted">
           <a class="item">Features</a>

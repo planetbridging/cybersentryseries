@@ -12,7 +12,7 @@ import { objDownloadManager } from "./objDownloadManager";
 import { objWebTemplating } from "./objWebTemplating";
 const oLoadFiles = require("./hashFiles");
 
-var oWebTemplate = new objWebTemplating();
+var oWebTemplate;
 
 export class objWebHosting {
   constructor(port) {
@@ -25,6 +25,9 @@ export class objWebHosting {
     var cache = await this.oDownloadManager.startup();
     this.oDownloadManager = null;
     this.cache = cache;
+
+    oWebTemplate = new objWebTemplating();
+    oWebTemplate.setStats(this.cache.createStatsJson());
   }
 
   async startHosting() {
@@ -165,7 +168,7 @@ export class objWebHosting {
           var html =
             `<!DOCTYPE html><html>` +
             this.getHead() +
-            this.convert(oWebTemplate.render()) +
+            this.convert(oWebTemplate.render(req.path)) +
             `</html>`;
           res.send(html);
         }

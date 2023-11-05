@@ -83,6 +83,7 @@ export class objWebHosting {
       var pageFound = false;
       var tmpCache = null;
       var content = null;
+      var pageWrapper = true;
 
       switch (req.path) {
         case "/":
@@ -116,7 +117,13 @@ export class objWebHosting {
           break;
         case "/cpesearch":
           pageFound = true;
-          content = oWebTemplate.renderCpelookup();
+          content = await oWebTemplate.renderCpelookup(null);
+          break;
+        case "/cpesearchresults":
+          console.log(req.query.search);
+          pageFound = true;
+          pageWrapper = false;
+          content = await oWebTemplate.renderCpelookup(req.query.search);
           break;
       }
 
@@ -172,12 +179,17 @@ export class objWebHosting {
             </html>
         `;*/
           // Create your React element
-          var html =
-            `<!DOCTYPE html><html>` +
-            this.getHead() +
-            this.convert(oWebTemplate.render(content)) +
-            `</html>`;
-          res.send(html);
+          if (pageWrapper) {
+            var html =
+              `<!DOCTYPE html><html>` +
+              this.getHead() +
+              this.convert(oWebTemplate.render(content)) +
+              `</html>`;
+            res.send(html);
+          } else {
+            var html = this.convert(content);
+            res.send(html);
+          }
         }
       } catch (ex) {
         console.log(ex);

@@ -1,28 +1,39 @@
+import axios from "axios";
 import React from "react";
 
 class objCpeLookup extends React.Component {
   state = {};
-  render() {
+
+  async renderSearchResults(search) {
+    console.log(search);
+    var searchResults = await axios.get(
+      "http://localhost:8123/cpelookup?search=" + search
+    );
+    console.log(searchResults["data"]);
+    return <div id="search-results-cpelookup">{new Date().toDateString()}</div>;
+  }
+
+  async render() {
     return (
-      <div id="search-container" class="ui category search">
+      <div id="search-container-cpelookup" class="ui category search">
         <p>hello</p>
         <div class="ui icon input">
           <input
-            id="search-input"
+            id="search-input-cpelookup"
             class="prompt"
             type="text"
             placeholder="Search..."
-            name="query"
-            hx-get="/search"
-            hx-trigger="click from:#search-button"
-            hx-target="#search-results"
+            name="search"
+            hx-get="/cpesearchresults"
+            hx-trigger="click from:#search-button-cpelookup"
+            hx-target="#search-results-cpelookup"
             hx-swap="outerHTML"
           />
-          <button id="search-button" class="ui button">
+          <button id="search-button-cpelookup" class="ui button">
             Search
           </button>
         </div>
-        <div id="search-results"></div>
+        <div id="search-results-cpelookup"></div>
       </div>
     );
   }

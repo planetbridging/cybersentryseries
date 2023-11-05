@@ -10,6 +10,7 @@ const React = require("react");
 
 import { objDownloadManager } from "./objDownloadManager";
 import { objWebTemplating } from "./objWebTemplating";
+
 const oLoadFiles = require("./hashFiles");
 
 var oWebTemplate;
@@ -81,10 +82,12 @@ export class objWebHosting {
       }
       var pageFound = false;
       var tmpCache = null;
+      var content = null;
 
       switch (req.path) {
         case "/":
           pageFound = true;
+          content = oWebTemplate.renderCachStats();
           break;
         case "/cvelookup":
           pageFound = true;
@@ -110,6 +113,10 @@ export class objWebHosting {
         case "/cvetometasploitlookup":
           pageFound = true;
           tmpCache = this.cache.lstCveToMetasploit;
+          break;
+        case "/cpesearch":
+          pageFound = true;
+          content = oWebTemplate.renderCpelookup();
           break;
       }
 
@@ -168,7 +175,7 @@ export class objWebHosting {
           var html =
             `<!DOCTYPE html><html>` +
             this.getHead() +
-            this.convert(oWebTemplate.render(req.path)) +
+            this.convert(oWebTemplate.render(content)) +
             `</html>`;
           res.send(html);
         }
@@ -200,6 +207,7 @@ export class objWebHosting {
       
         <script src="/js/jquery.min.js"></script>
         <script src="/dist/semantic.js"></script>
+        <script src="htmx.min.js"></script>
       
       
         <script src="/js/engine.js"></script>

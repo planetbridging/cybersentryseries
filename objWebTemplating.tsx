@@ -1,5 +1,6 @@
 import React from "react";
 import { objSemanticBuilder } from "./objSemanticBuilder";
+import objCpeLookup from "./objCpelookup";
 
 export class objWebTemplating extends React.Component {
   constructor(props) {
@@ -27,22 +28,25 @@ export class objWebTemplating extends React.Component {
     return <ul>{listItems}</ul>;
   }
 
-  renderCachStats(path) {
+  renderCachStats() {
     var showStatsTbl = <></>;
-    if (path == "/") {
-      showStatsTbl = (
-        <div class="ui container">
-          <h1 class="ui header">Show stats of maps</h1>
-          {this.oSemBuild.renderSimpleJsonToTable(this.cacheStats, "inverted")}
-        </div>
-      );
-    }
+
+    showStatsTbl = (
+      <div class="ui container">
+        <h1 class="ui header">Show stats of maps</h1>
+        {this.oSemBuild.renderSimpleJsonToTable(this.cacheStats, "inverted")}
+      </div>
+    );
+
     return showStatsTbl;
   }
 
-  render(path) {
-    var showStatsTbl = this.renderCachStats(path);
+  renderCpelookup() {
+    var oCpelookup = new objCpeLookup();
+    return oCpelookup.render();
+  }
 
+  render(content) {
     return (
       <body>
         <div class="ui top fixed menu inverted fluid six item">
@@ -53,8 +57,8 @@ export class objWebTemplating extends React.Component {
           <a class="item">bewear</a>
           <a class="item">go get galaxy</a>
         </div>
-        <div id="main" class="content scrollable">
-          <div id="content">{showStatsTbl}</div>
+        <div class="main content scrollable">
+          <div class="contentPg">{content}</div>
         </div>
         <div class="ui bottom fixed menu inverted">
           <a class="item">Features</a>

@@ -23,15 +23,13 @@ export class objWebTemplating extends React.Component {
   render() {
     return (
       <body>
-        <div class="ui fixed">
-          <div class="ui menu inverted">
-            <div class="header item">cyber sentry series</div>
-            <a class="item">home</a>
-            <a class="item">cpelookup</a>
-            <a class="item">cvelookup</a>
-            <a class="item">bewear</a>
-            <a class="item">go get galaxy</a>
-          </div>
+        <div class="ui top fixed menu inverted fluid six item">
+          <div class="header item">cyber sentry series</div>
+          <a class="item">home</a>
+          <a class="item">cpelookup</a>
+          <a class="item">cvelookup</a>
+          <a class="item">bewear</a>
+          <a class="item">go get galaxy</a>
         </div>
         <div id="main" class="content scrollable">
           <div class="ui container">
@@ -40,6 +38,11 @@ export class objWebTemplating extends React.Component {
 
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
           </div>
+        </div>
+        <div class="ui bottom fixed menu inverted">
+          <a class="item">Features</a>
+          <a class="item">Testimonials</a>
+          <a class="item">Sign-in</a>
         </div>
       </body>
     );

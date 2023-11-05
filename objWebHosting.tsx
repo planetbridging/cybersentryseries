@@ -163,7 +163,7 @@ export class objWebHosting {
         `;*/
           // Create your React element
           var html =
-            `<!DOCTYPE html>` +
+            `<!DOCTYPE html><html>` +
             this.getHead() +
             this.convert(oWebTemplate.render()) +
             `</html>`;

@@ -37,7 +37,7 @@ body {
   background-color: transparent;
 }*/
 
-body {
+#main {
   display: flex;
   flex-direction: column;
   height: 100vh;

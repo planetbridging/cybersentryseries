@@ -162,8 +162,12 @@ export class objWebHosting {
             </html>
         `;*/
           // Create your React element
-
-          res.send(this.convert(oWebTemplate.render()));
+          var html =
+            `<!DOCTYPE html>` +
+            this.getHead() +
+            this.convert(oWebTemplate.render()) +
+            `</html>`;
+          res.send(html);
         }
       } catch (ex) {
         console.log(ex);
@@ -171,6 +175,33 @@ export class objWebHosting {
         return;
       }
     });
+  }
+
+  getHead() {
+    return `<head>
+        <!-- Standard Meta -->
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+      
+        <!-- Site Properties -->
+        <title>Homepage - Semantic</title>
+        <link rel="stylesheet" type="text/css" href="/dist/semantic.css">
+        <link rel="stylesheet" type="text/css" href="/css/master.css">
+      
+      
+        <style type="text/css">
+      
+      
+        </style>
+      
+        <script src="/js/jquery.min.js"></script>
+        <script src="/dist/semantic.js"></script>
+      
+      
+        <script src="/js/engine.js"></script>
+        
+      </head>`;
   }
 
   convert(json) {

@@ -55,8 +55,12 @@ export class objWebTemplating extends React.Component {
       <body>
         <div class="ui top fixed menu inverted fluid six item">
           <div class="header item">cyber sentry series</div>
-          <a class="item">home</a>
-          <a class="item">cpelookup</a>
+          <a class="item" href="/">
+            home
+          </a>
+          <a class="item" href="/cpesearch">
+            cpelookup
+          </a>
           <a class="item">cvelookup</a>
           <a class="item">bewear</a>
           <a class="item">go get galaxy</a>

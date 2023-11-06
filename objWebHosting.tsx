@@ -84,6 +84,7 @@ export class objWebHosting {
       var tmpCache = null;
       var content = null;
       var pageWrapper = true;
+      var pageExactResultsType = -1;
 
       switch (req.path) {
         case "/":
@@ -97,6 +98,7 @@ export class objWebHosting {
         case "/cpelookup":
           pageFound = true;
           tmpCache = this.cache.lstUniqCpe;
+          pageExactResultsType = 0;
           break;
         case "/cpetocvelookup":
           pageFound = true;
@@ -138,7 +140,17 @@ export class objWebHosting {
           const searchQuery = req.query.search;
           json.search = searchQuery;
           if (tmpCache.has(searchQuery)) {
-            json.found = tmpCache.get(searchQuery);
+            var tmpResults = tmpCache.get(searchQuery);
+
+            if (pageExactResultsType == 0 && tmpResults.length > 0) {
+              var lstTmp = [];
+              for (var r in tmpResults) {
+                lstTmp.push(this.getCve(tmpResults[r]));
+              }
+              json.found = lstTmp;
+            } else {
+              json.found = tmpCache.get(searchQuery);
+            }
           } else {
             var possible = [];
             // var count = 0;
@@ -197,6 +209,26 @@ export class objWebHosting {
         return;
       }
     });
+  }
+
+  getCve(cve) {
+    var tmp = {
+      exploits: [],
+      metasploits: [],
+    };
+    if (this.cache.lstCve.has(cve)) {
+      tmp["cve"] = this.cache.lstCve.get(cve);
+      if (this.cache.lstCveToSearchsploit.has(cve)) {
+        var tExploits = this.cache.lstCveToSearchsploit.get(cve);
+        tmp["exploits"] = tExploits;
+      }
+      if (this.cache.lstCveToMetasploit.has(cve)) {
+        var tMetasploits = this.cache.lstCveToMetasploit.get(cve);
+        tmp["metasploits"] = tMetasploits;
+      }
+    }
+
+    return tmp;
   }
 
   getHead() {

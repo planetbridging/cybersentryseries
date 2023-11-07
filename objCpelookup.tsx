@@ -1,21 +1,23 @@
 import axios from "axios";
 import React from "react";
 
+import objCveView from "./objCveView";
+
 class objCpeLookup extends React.Component {
   state = {};
 
   async renderSearchResults(search) {
-    console.log(search);
+    //console.log(search);
     var searchResults = await axios.get(
       "http://localhost:8123/cpelookup?search=" + search
     );
     var data = searchResults["data"];
-    console.log(data);
+    //console.log(data);
 
     return (
       <div id="search-results-cpelookup">
         <div className="ui container">
-          <h2 className="ui header">CPE Lookup: {data.search}</h2>
+          <h2 className="ui header">Search: {data.search}</h2>
           {data["found"] != "" ? this.renderFoundItems(data["found"]) : ""}
           {data["possible"] != ""
             ? this.renderPossibleCards(data["possible"])
@@ -59,30 +61,55 @@ class objCpeLookup extends React.Component {
   }
 
   renderFoundItems(found) {
+    /*for (var f in found) {
+      console.log(found[f].metasploits);
+    }*/
+    var oCveView = new objCveView();
     var tmp = found.map((item, index) => (
       <div key={index} className="ui card">
         <div className="content">
           <div className="description">
             <div className="ui list">
-              <div className="item">
-                <strong>CVEs:</strong>
-                {item.cve && item.cve.length > 0
-                  ? item.cve.map((cveItem, cveIndex) => (
-                      <div key={cveIndex} className="ui label">
-                        {cveItem}
-                      </div>
-                    ))
-                  : "None"}
-              </div>
+              <div className="item">{oCveView.render(item)}</div>
               <div className="item">
                 <strong>Exploits:</strong>
-                {item.exploits.length > 0 ? item.exploits.join(", ") : "None"}
+                {item.exploits && item.exploits.length > 0 ? (
+                  <div className="ui list">
+                    {item.exploits.map((exploitId, index) => (
+                      <a
+                        key={index}
+                        href={`https://www.exploit-db.com/exploits/${exploitId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ui small blue basic label"
+                      >
+                        {exploitId}
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <div>None</div>
+                )}
               </div>
               <div className="item">
                 <strong>Metasploits:</strong>
-                {item.metasploits.length > 0
-                  ? item.metasploits.join(", ")
-                  : "None"}
+                {item.metasploits && item.metasploits.length > 0 ? (
+                  <div className="ui list">
+                    {item.metasploits.map((metasploit, index) => (
+                      <div key={index} className="item">
+                        <div className="content">
+                          <div className="header">{metasploit.name}</div>
+                          <div className="description">
+                            {metasploit.fullname}
+                          </div>
+                          <div className="meta">{metasploit.type}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div>None</div>
+                )}
               </div>
             </div>
           </div>
@@ -95,21 +122,28 @@ class objCpeLookup extends React.Component {
 
   async render() {
     return (
-      <div id="search-container-cpelookup" class="ui category search">
-        <p>hello</p>
-        <div class="ui icon input">
-          <input
-            id="search-input-cpelookup"
-            class="prompt"
-            type="text"
-            placeholder="Search..."
-            name="search"
-            hx-get="/cpesearchresults"
-            hx-trigger="click from:#search-button-cpelookup"
-            hx-target="#search-results-cpelookup"
-            hx-swap="outerHTML"
-          />
-          <button id="search-button-cpelookup" class="ui button">
+      <div className="ui container">
+        <h1 className="ui center aligned header">CPE Lookup</h1>
+        <div id="search-container-cpelookup" className="ui category search">
+          <div className="ui massive fluid icon input">
+            <input
+              id="search-input-cpelookup"
+              className="prompt"
+              type="text"
+              placeholder="Search..."
+              name="search"
+              hx-get="/cpesearchresults"
+              hx-trigger="click from:#search-button-cpelookup"
+              hx-target="#search-results-cpelookup"
+              hx-swap="outerHTML"
+            />
+            <i className="search icon"></i>
+          </div>
+          <button
+            id="search-button-cpelookup"
+            className="ui large fluid button"
+            style={{ marginTop: "10px" }}
+          >
             Search
           </button>
         </div>

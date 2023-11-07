@@ -254,7 +254,8 @@ export class objWebHosting {
         <script src="/dist/semantic.js"></script>
         <script src="htmx.min.js"></script>
       
-      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
         <script src="/js/engine.js"></script>
         
       </head>`;

@@ -226,6 +226,12 @@ class objCpeLookup extends React.Component {
           >
             Search
           </button>
+          <button
+            className="ui large fluid button"
+            onclick="downloadPDF('search-results-cpelookup')"
+          >
+            Export
+          </button>
         </div>
         <div id="search-results-cpelookup"></div>
       </div>

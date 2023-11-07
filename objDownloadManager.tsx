@@ -88,6 +88,10 @@ export class objDownloadManager {
         continue;
       }
 
+      if (cveId == "CVE-2017-0144") {
+        console.log(cveItem);
+        console.log(cpeMatches);
+      }
       //const cpeValues = cpeMatches.map((cpeMatch) => cpeMatch.cpe23Uri);
 
       const cpeValues = cpeMatches.map((cpeMatch) => {

@@ -60,11 +60,74 @@ class objCpeLookup extends React.Component {
     ));
   }
 
+  getUniqCategories(found) {
+    var lstUniqCategories = new Map();
+    for (var c in found) {
+      for (var cats in found[c].cve.categories) {
+        const category = found[c].cve.categories[cats];
+        if (category) {
+          // We need to check if the category is already present, otherwise initialize an empty array
+          if (!lstUniqCategories.has(category)) {
+            lstUniqCategories.set(category, true); // Set value to true or any other value just to acknowledge the existence of the key
+          }
+        }
+      }
+    }
+
+    // Now retrieve the unique categories from the Map
+    var uniqCat = Array.from(lstUniqCategories.keys());
+    //console.log(uniqCat);
+
+    var tmp = uniqCat.map((item, index) => (
+      <div key={index} className="ui card">
+        <div className="content">{item}</div>
+      </div>
+    ));
+
+    return [<div className="ui link cards">{tmp}</div>, uniqCat.length];
+  }
+
+  getUniqExploits(found) {
+    var lstUniqCategories = new Map();
+    for (var c in found) {
+      for (var cats in found[c].exploits) {
+        const category = found[c].exploits[cats];
+        if (category) {
+          // We need to check if the category is already present, otherwise initialize an empty array
+          if (!lstUniqCategories.has(category)) {
+            lstUniqCategories.set(category, true); // Set value to true or any other value just to acknowledge the existence of the key
+          }
+        }
+      }
+    }
+
+    // Now retrieve the unique categories from the Map
+    var uniqCat = Array.from(lstUniqCategories.keys());
+    var tmp = uniqCat.map((item, index) => (
+      <div key={index} className="ui card">
+        <div className="content">
+          <a
+            href={`https://www.exploit-db.com/exploits/${item}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ui small blue basic label"
+          >
+            {`https://www.exploit-db.com/exploits/${item}`}
+          </a>
+        </div>
+      </div>
+    ));
+
+    return [<div className="ui link cards">{tmp}</div>, uniqCat.length];
+  }
+
   renderFoundItems(found) {
     /*for (var f in found) {
       console.log(found[f].metasploits);
     }*/
+
     var oCveView = new objCveView();
+
     var tmp = found.map((item, index) => (
       <div key={index} className="ui card">
         <div className="content">
@@ -117,7 +180,24 @@ class objCpeLookup extends React.Component {
       </div>
     ));
 
-    return <div class="ui link cards">{tmp}</div>;
+    var uniqCat = this.getUniqCategories(found);
+    var uniqExploits = this.getUniqExploits(found);
+    return (
+      <div>
+        <h3 class="ui center aligned header">
+          Unique Categories {uniqCat[1].toString()}
+        </h3>
+        {uniqCat[0]}
+        <h3 class="ui center aligned header">
+          Unique Exploits {uniqExploits[1].toString()}
+        </h3>
+        {uniqExploits[0]}
+        <h3 class="ui center aligned header">
+          Unique Cve {found.length.toString()}
+        </h3>
+        <div class="ui link cards">{tmp}</div>
+      </div>
+    );
   }
 
   async render() {

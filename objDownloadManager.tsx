@@ -7,6 +7,21 @@ const objCollector = require("./objCollector");
 const { lstFiltes } = require("./staticData");
 
 var objCollectorYear = new objCollector.objCollector();
+
+// Helper function to recursively extract CPE matches
+function extractCPEMatches(nodes) {
+  let cpeMatches = [];
+  for (const node of nodes) {
+    if (node.cpe_match) {
+      cpeMatches = cpeMatches.concat(node.cpe_match);
+    }
+    if (node.children && node.children.length) {
+      cpeMatches = cpeMatches.concat(extractCPEMatches(node.children));
+    }
+  }
+  return cpeMatches;
+}
+
 export class objDownloadManager {
   constructor() {}
 
@@ -81,17 +96,19 @@ export class objDownloadManager {
       const cveMeta = cveItem.cve.CVE_data_meta;
       const cveId = cveMeta.ID;
       const descriptionTmp = cveItem.cve.description.description_data[0]?.value;
-      const cpeMatches = cveItem.configurations.nodes[0]?.cpe_match;
+      const cpeMatches = extractCPEMatches(cveItem.configurations.nodes);
 
       if (!cveId || !descriptionTmp || !cpeMatches) {
         //console.log(`Invalid structure for CVE item: ${cveId}. Skipping.`);
         continue;
       }
 
-      if (cveId == "CVE-2017-0144") {
+      /*if (cveId == "CVE-2017-0144") {
         console.log(cveItem);
-        console.log(cpeMatches);
-      }
+        console.log(cveItem.configurations.nodes);
+        
+      }*/
+
       //const cpeValues = cpeMatches.map((cpeMatch) => cpeMatch.cpe23Uri);
 
       const cpeValues = cpeMatches.map((cpeMatch) => {

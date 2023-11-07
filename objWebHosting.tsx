@@ -29,7 +29,7 @@ export class objWebHosting {
 
     oWebTemplate = new objWebTemplating();
     oWebTemplate.setStats(this.cache.createStatsJson());
-    //console.log(this.getCve("CVE-2017-0144"));
+    //console.log(this.getCve("CVE-2013-2737"));
   }
 
   async startHosting() {

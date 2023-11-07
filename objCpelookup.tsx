@@ -84,7 +84,11 @@ class objCpeLookup extends React.Component {
       </div>
     ));
 
-    return [<div className="ui link cards">{tmp}</div>, uniqCat.length];
+    return [
+      <div className="ui link cards">{tmp}</div>,
+      uniqCat.length,
+      uniqCat,
+    ];
   }
 
   getUniqExploits(found) {
@@ -118,7 +122,11 @@ class objCpeLookup extends React.Component {
       </div>
     ));
 
-    return [<div className="ui link cards">{tmp}</div>, uniqCat.length];
+    return [
+      <div className="ui link cards">{tmp}</div>,
+      uniqCat.length,
+      uniqCat,
+    ];
   }
 
   renderFoundItems(found) {

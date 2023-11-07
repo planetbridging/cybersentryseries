@@ -10,6 +10,7 @@ const React = require("react");
 
 import { objDownloadManager } from "./objDownloadManager";
 import { objWebTemplating } from "./objWebTemplating";
+import { objPdfGenerator } from "./objPdfGenerator";
 
 const oLoadFiles = require("./hashFiles");
 
@@ -18,7 +19,7 @@ var oWebTemplate;
 export class objWebHosting {
   constructor(port) {
     this.oDownloadManager = new objDownloadManager();
-
+    this.oPdfGen = new objPdfGenerator();
     this.port = port;
   }
 
@@ -127,6 +128,10 @@ export class objWebHosting {
           pageFound = true;
           pageWrapper = false;
           content = await oWebTemplate.renderCpelookup(req.query.search);
+          break;
+        case "/cpesearchresultspdf":
+          await this.oPdfGen.sendPdfCpe(res, req, req.query.search);
+          return;
           break;
       }
 

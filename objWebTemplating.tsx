@@ -41,10 +41,12 @@ export class objWebTemplating extends React.Component {
     return showStatsTbl;
   }
 
-  async renderCpelookup(search) {
+  async renderCpelookup(search, ssrRender) {
     var oCpelookup = new objCpeLookup();
     if (search == null) {
-      return oCpelookup.render();
+      return oCpelookup.render(false, "");
+    } else if (ssrRender) {
+      return oCpelookup.render(true, search);
     } else {
       return await oCpelookup.renderSearchResults(search);
     }

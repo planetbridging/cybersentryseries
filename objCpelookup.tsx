@@ -225,7 +225,11 @@ class objCpeLookup extends React.Component {
     );
   }
 
-  async render() {
+  async render(ssrRender, search) {
+    var loadSearchResults = <></>;
+    if (ssrRender) {
+      loadSearchResults = await this.renderSearchResults(search);
+    }
     return (
       <div className="ui container">
         <h1 className="ui center aligned header">CPE Lookup</h1>
@@ -252,7 +256,7 @@ class objCpeLookup extends React.Component {
             Search
           </button>
         </div>
-        <div id="search-results-cpelookup"></div>
+        <div id="search-results-cpelookup">{loadSearchResults}</div>
       </div>
     );
   }

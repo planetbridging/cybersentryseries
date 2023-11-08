@@ -121,13 +121,13 @@ export class objWebHosting {
           break;
         case "/cpesearch":
           pageFound = true;
-          content = await oWebTemplate.renderCpelookup(null);
+          content = await oWebTemplate.renderCpelookup(req.query.search, true);
           break;
         case "/cpesearchresults":
-          console.log(req.query.search);
+          //console.log(req.query.search);
           pageFound = true;
           pageWrapper = false;
-          content = await oWebTemplate.renderCpelookup(req.query.search);
+          content = await oWebTemplate.renderCpelookup(req.query.search, false);
           break;
         case "/cpesearchresultspdf":
           await this.oPdfGen.sendPdfCpe(res, req, req.query.search);

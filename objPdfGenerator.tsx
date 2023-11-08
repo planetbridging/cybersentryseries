@@ -69,6 +69,7 @@ export class objPdfGenerator {
           rows: [],
         };
         try {
+          var tmpMap = new Map();
           for (var oExploits in ocpeExploitsLst[2]) {
             //example of data processing
             /* {
@@ -76,12 +77,15 @@ export class objPdfGenerator {
     file: "exploits/multiple/webapps/51193.py",
     description: "Apache 2.4.x - Buffer Overflow"
   }*/
-            table.rows.push([
-              ocpeExploitsLst[2][oExploits][0],
-              ocpeExploitsLst[2][oExploits][1]["cveValues"].toString(),
-              ocpeExploitsLst[2][oExploits][1]["file"],
-              ocpeExploitsLst[2][oExploits][1]["description"],
-            ]);
+            if (!tmpMap.has(ocpeExploitsLst[2][oExploits][0])) {
+              tmpMap.set(ocpeExploitsLst[2][oExploits][0]);
+              table.rows.push([
+                ocpeExploitsLst[2][oExploits][0],
+                ocpeExploitsLst[2][oExploits][1]["cveValues"].toString(),
+                ocpeExploitsLst[2][oExploits][1]["file"],
+                ocpeExploitsLst[2][oExploits][1]["description"],
+              ]);
+            }
           }
           doc.addPage();
           await doc.table(table, {

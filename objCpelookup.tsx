@@ -226,7 +226,7 @@ class objCpeLookup extends React.Component {
   }
 
   async render(ssrRender, search) {
-    var loadSearchResults = <></>;
+    var loadSearchResults = null;
     if (ssrRender) {
       loadSearchResults = await this.renderSearchResults(search);
     }

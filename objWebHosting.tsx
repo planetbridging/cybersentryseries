@@ -133,6 +133,10 @@ export class objWebHosting {
           await this.oPdfGen.sendPdfCpe(res, req, req.query.search);
           return;
           break;
+        case "/cvesearch":
+          pageFound = true;
+          content = await oWebTemplate.renderCvelookup(req.query.search, true);
+          break;
       }
 
       if (tmpCache != null) {

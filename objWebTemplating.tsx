@@ -1,6 +1,7 @@
 import React from "react";
 import { objSemanticBuilder } from "./objSemanticBuilder";
 import objCpeLookup from "./objCpelookup";
+import objCvelookup from "./objCvelookup";
 
 export class objWebTemplating extends React.Component {
   constructor(props) {
@@ -52,6 +53,17 @@ export class objWebTemplating extends React.Component {
     }
   }
 
+  async renderCvelookup(search, ssrRender) {
+    var oCvelookup = new objCvelookup();
+    if (search == null) {
+      return oCvelookup.render(false, "");
+    } else if (ssrRender) {
+      return oCvelookup.render(true, search);
+    } else {
+      return await oCvelookup.renderSearchResults(search);
+    }
+  }
+
   render(content) {
     return (
       <body>
@@ -63,7 +75,9 @@ export class objWebTemplating extends React.Component {
           <a class="item" href="/cpesearch">
             cpelookup
           </a>
-          <a class="item">cvelookup</a>
+          <a class="item" href="/cvesearch">
+            cvelookup
+          </a>
           <a class="item">bewear</a>
           <a class="item">go get galaxy</a>
         </div>

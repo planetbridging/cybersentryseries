@@ -2,9 +2,15 @@ import axios from "axios";
 import React from "react";
 
 import objCveView from "./objCveView";
+import { objSemanticBuilder } from "./objSemanticBuilder";
 
 class objCpeLookup extends React.Component {
   state = {};
+
+  constructor() {
+    super();
+    this.oSemaBuilder = new objSemanticBuilder();
+  }
 
   async renderSearchResults(search) {
     //console.log(search);
@@ -18,7 +24,9 @@ class objCpeLookup extends React.Component {
       <div id="search-results-cpelookup">
         <div className="ui container">
           <h2 className="ui header">Search: {data.search}</h2>
-          {data["found"] != "" ? this.renderFoundItems(data["found"]) : ""}
+          {data["found"] != ""
+            ? this.renderFoundItems(data["found"], search)
+            : ""}
           {data["possible"] != ""
             ? this.renderPossibleCards(data["possible"])
             : ""}
@@ -111,12 +119,13 @@ class objCpeLookup extends React.Component {
       <div key={index} className="ui card">
         <div className="content">
           <a
-            href={`https://www.exploit-db.com/exploits/${item}`}
+            href={`https://www.exploit-db.com/exploits/${item[0]}`}
             target="_blank"
             rel="noopener noreferrer"
             className="ui small blue basic label"
           >
-            {`https://www.exploit-db.com/exploits/${item}`}
+            {`https://www.exploit-db.com/exploits/${item[0]}`}
+            {this.oSemaBuilder.renderSimpleJsonToTable(item[1], " inverted")}
           </a>
         </div>
       </div>
@@ -129,7 +138,7 @@ class objCpeLookup extends React.Component {
     ];
   }
 
-  renderFoundItems(found) {
+  renderFoundItems(found, search) {
     /*for (var f in found) {
       console.log(found[f].metasploits);
     }*/
@@ -192,6 +201,14 @@ class objCpeLookup extends React.Component {
     var uniqExploits = this.getUniqExploits(found);
     return (
       <div>
+        <a
+          href={"http://localhost:8123/cpesearchresultspdf?search=" + search}
+          className="ui large fluid button"
+          target="_blank"
+        >
+          Export {search} to pdf
+        </a>
+
         <h3 class="ui center aligned header">
           Unique Categories {uniqCat[1].toString()}
         </h3>
@@ -233,12 +250,6 @@ class objCpeLookup extends React.Component {
             style={{ marginTop: "10px" }}
           >
             Search
-          </button>
-          <button
-            className="ui large fluid button"
-            onclick="downloadPDF('search-results-cpelookup')"
-          >
-            Export
           </button>
         </div>
         <div id="search-results-cpelookup"></div>

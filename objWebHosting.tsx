@@ -226,7 +226,17 @@ export class objWebHosting {
       tmp["cve"] = this.cache.lstCve.get(cve);
       if (this.cache.lstCveToSearchsploit.has(cve)) {
         var tExploits = this.cache.lstCveToSearchsploit.get(cve);
-        tmp["exploits"] = tExploits;
+        var lstExploits = [];
+        for (var tEx in tExploits) {
+          if (this.cache.lstSearchsploit.has(tExploits[tEx])) {
+            var tmpExploit = [
+              tExploits[tEx],
+              this.cache.lstSearchsploit.get(tExploits[tEx]),
+            ];
+            lstExploits.push(tmpExploit);
+          }
+        }
+        tmp["exploits"] = lstExploits;
       }
       if (this.cache.lstCveToMetasploit.has(cve)) {
         var tMetasploits = this.cache.lstCveToMetasploit.get(cve);

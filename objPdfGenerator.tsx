@@ -62,21 +62,36 @@ export class objPdfGenerator {
 
         var ocpeExploitsLst = oCpelookup.getUniqExploits(data["found"]);
 
-        doc
-          .fontSize(18)
-          .text("Unique exploits " + ocpeExploitsLst[1].toString(), {
+        const table = {
+          title: "Unique exploits " + ocpeExploitsLst[1].toString(),
+          subtitle: "https://www.exploit-db.com/exploits/{id}",
+          headers: ["Searchsploit", "Cve Values", "File", "Description"],
+          rows: [],
+        };
+        try {
+          for (var oExploits in ocpeExploitsLst[2]) {
+            //example of data processing
+            /* {
+    cveValues: [ "CVE-2021-44790" ],
+    file: "exploits/multiple/webapps/51193.py",
+    description: "Apache 2.4.x - Buffer Overflow"
+  }*/
+            table.rows.push([
+              ocpeExploitsLst[2][oExploits][0],
+              ocpeExploitsLst[2][oExploits][1]["cveValues"].toString(),
+              ocpeExploitsLst[2][oExploits][1]["file"],
+              ocpeExploitsLst[2][oExploits][1]["description"],
+            ]);
+          }
+          doc.addPage();
+          await doc.table(table, {
+            width: 400,
+          });
+        } catch {
+          doc.fontSize(25).text("Failed to generate uniq exploit tbl", {
             align: "center",
             padding: 40,
           });
-
-        for (var oExploits in ocpeExploitsLst[2]) {
-          doc
-            .fontSize(12)
-            .text(
-              "https://www.exploit-db.com/exploits/" +
-                ocpeExploitsLst[2][oExploits],
-              { align: "center" }
-            );
           doc.moveDown();
         }
       }

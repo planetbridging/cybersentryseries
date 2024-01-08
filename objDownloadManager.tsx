@@ -249,11 +249,13 @@ export class objDownloadManager {
       //console.log(cveItem.impact);
       //console.log(cpeValues);
       var categories = this.getCategories(descriptionTmp);
+      var descriptionTmpClean = descriptionTmp?.replace(/[^a-zA-Z0-9]/g, '');
+
       var objCve = {
         baseMetricV2: cveItem.impact?.baseMetricV2,
         baseMetricV3: cveItem.impact?.baseMetricV3,
         cve: cveId,
-        description: descriptionTmp,
+        description: descriptionTmpClean,
         lstCpe: cpeValues,
         categories: categories,
       };

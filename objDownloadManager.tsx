@@ -249,7 +249,7 @@ export class objDownloadManager {
       //console.log(cveItem.impact);
       //console.log(cpeValues);
       var categories = this.getCategories(descriptionTmp);
-      var descriptionTmpClean = descriptionTmp?.replace(/[^a-zA-Z0-9]/g, '');
+      var descriptionTmpClean = descriptionTmp?.replace(/[^a-zA-Z0-9 ]/g, '');
 
       var objCve = {
         baseMetricV2: cveItem.impact?.baseMetricV2,
@@ -313,7 +313,7 @@ export class objDownloadManager {
           const cveValues = row.codes.split(";");
 
           //results.push({ id, cveValues, file, description });
-          var descriptionTmpClean = description?.replace(/[^a-zA-Z0-9]/g, '');
+          var descriptionTmpClean = description?.replace(/[^a-zA-Z0-9 ]/g, '');
           objCollectorYear.lstSearchsploit.set(id, {
             cveValues: cveValues,
             file: file,

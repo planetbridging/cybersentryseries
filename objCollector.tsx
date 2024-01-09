@@ -108,9 +108,51 @@ export class objCollector {
         ON lstCve.cve = lstCveToSearchsploit.cveToSearchsploit;
     `;
 
+
+    var uniqCpeCve = `CREATE VIEW view_UniqCpeCve AS
+    SELECT
+        lstUniqCpe.uniqCpe,
+        cveList.cve
+    FROM
+        lstUniqCpe
+    CROSS JOIN JSON_TABLE(
+        lstUniqCpe.data,
+        '$[*]' COLUMNS(
+            cve VARCHAR(255) PATH '$'
+        )
+    ) AS cveList;
+    `;
+
+
+    var CpeCveSearchsploitDetails = `CREATE VIEW view_CpeCveSearchsploitDetails AS
+    SELECT 
+        ucc.uniqCpe, 
+        ucc.cve, 
+        vcts.cveData, 
+        vcts.searchsploitData
+    FROM 
+        view_UniqCpeCve AS ucc
+    JOIN 
+        view_CveToSearchsploit AS vcts 
+        ON ucc.cve COLLATE utf8mb4_unicode_ci = vcts.cveID COLLATE utf8mb4_unicode_ci;
+    `;
+
     if(!lstDb.includes("view_CveToSearchsploit")){
       await this.oSql.randomSql(
         cveSearchsploit
+      );
+    }
+
+    if(!lstDb.includes("view_UniqCpeCve")){
+      await this.oSql.randomSql(
+        uniqCpeCve
+      );
+    }
+
+    //doesnt work, json to slow :(
+    if(!lstDb.includes("view_CpeCveSearchsploitDetails")){
+      await this.oSql.randomSql(
+        CpeCveSearchsploitDetails
       );
     }
   }

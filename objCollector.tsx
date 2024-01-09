@@ -87,12 +87,32 @@ export class objCollector {
       await this.bulkSave(`lstCveToSearchsploit`, `cveToSearchsploit`, this.lstCveToSearchsploit);
     }
 
-    if(!lstDb.includes("lstCveToMetasploit")){
-      console.log("uploading lstCveToMetasploit");
-      await this.bulkSave(`lstCveToMetasploit`, `cveToMetasploit`, this.lstCveToMetasploit);
-    }
+    //if(!lstDb.includes("lstCveToMetasploit")){
+      //console.log("uploading lstCveToMetasploit");
+      //await this.bulkSave(`lstCveToMetasploit`, `cveToMetasploit`, this.lstCveToMetasploit);
+    //}
+    //console.log(this.lstCveToMetasploit);
+    await this.createViews(lstDb);
+  }
 
-    
+  async createViews(lstDb){
+    var cveSearchsploit = `CREATE VIEW view_CveToSearchsploit AS
+    SELECT 
+        lstCve.cve AS cveID, 
+        lstCve.data AS cveData, 
+        lstCveToSearchsploit.data AS searchsploitData
+    FROM 
+        lstCve
+    JOIN 
+        lstCveToSearchsploit 
+        ON lstCve.cve = lstCveToSearchsploit.cveToSearchsploit;
+    `;
+
+    if(!lstDb.includes("view_CveToSearchsploit")){
+      await this.oSql.randomSql(
+        cveSearchsploit
+      );
+    }
   }
 
   async bulkSave(name, subname, lst) {

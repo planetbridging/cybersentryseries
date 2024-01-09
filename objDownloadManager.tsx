@@ -313,11 +313,11 @@ export class objDownloadManager {
           const cveValues = row.codes.split(";");
 
           //results.push({ id, cveValues, file, description });
-
+          var descriptionTmpClean = description?.replace(/[^a-zA-Z0-9]/g, '');
           objCollectorYear.lstSearchsploit.set(id, {
             cveValues: cveValues,
             file: file,
-            description: description,
+            description: descriptionTmpClean,
           });
 
           for (var c in cveValues) {

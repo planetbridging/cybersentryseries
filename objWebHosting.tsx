@@ -12,6 +12,8 @@ import { objDownloadManager } from "./objDownloadManager";
 import { objWebTemplating } from "./objWebTemplating";
 import { objPdfGenerator } from "./objPdfGenerator";
 
+const objCollector = require("./objCollector");
+
 const oLoadFiles = require("./hashFiles");
 
 var oWebTemplate;
@@ -22,8 +24,15 @@ export class objWebHosting {
     this.oPdfGen = new objPdfGenerator();
     this.port = port;
   }
+  
+
+  async blankObjCollector(){
+    this.cache = new objCollector.objCollector();
+    this.blankSetup = true;
+  }
 
   async buildCache() {
+    this.blankSetup = false;
     var cache = await this.oDownloadManager.startup();
     this.oDownloadManager = null;
     this.cache = cache;
@@ -137,48 +146,80 @@ export class objWebHosting {
           pageFound = true;
           content = await oWebTemplate.renderCvelookup(req.query.search, true);
           break;
+          case "/cvesearchresults":
+            pageFound = true;
+          pageWrapper = false;
+            content = await oWebTemplate.renderCvelookup(req.query.search, false);
+            break;
+          
       }
 
       if (tmpCache != null) {
+          if(tmpCache.size > 0){
+          
+          var json = {
+            path: req.path,
+            search: "",
+            found: "",
+            possible: [],
+          };
+          if (req.query.search) {
+            const searchQuery = req.query.search;
+            json.search = searchQuery;
+            if (tmpCache.has(searchQuery)) {
+              var tmpResults = tmpCache.get(searchQuery);
+
+              if (pageExactResultsType == 0 && tmpResults.length > 0) {
+                var lstTmp = [];
+                for (var r in tmpResults) {
+                  lstTmp.push(this.getCve(tmpResults[r]));
+                }
+                json.found = lstTmp;
+              } else {
+                json.found = tmpCache.get(searchQuery);
+              }
+            } else {
+              var possible = [];
+              // var count = 0;
+              for (const [key, value] of tmpCache.entries()) {
+                //console.log(`Key: ${key}, Value: ${value}`);
+                if (key.includes(searchQuery)) {
+                  possible.push([key, value]);
+                }
+                if (possible.length >= 100) {
+                  break;
+                }
+                // count += 1;
+              }
+
+              json.possible = possible;
+            }
+          }
+
+          res.send(json);
+          return;
+        }
+      } 
+
+      if(this.blankSetup){
+
         var json = {
           path: req.path,
           search: "",
           found: "",
           possible: [],
         };
+
         if (req.query.search) {
+          
           const searchQuery = req.query.search;
           json.search = searchQuery;
-          if (tmpCache.has(searchQuery)) {
-            var tmpResults = tmpCache.get(searchQuery);
 
-            if (pageExactResultsType == 0 && tmpResults.length > 0) {
-              var lstTmp = [];
-              for (var r in tmpResults) {
-                lstTmp.push(this.getCve(tmpResults[r]));
-              }
-              json.found = lstTmp;
-            } else {
-              json.found = tmpCache.get(searchQuery);
-            }
-          } else {
-            var possible = [];
-            // var count = 0;
-            for (const [key, value] of tmpCache.entries()) {
-              //console.log(`Key: ${key}, Value: ${value}`);
-              if (key.includes(searchQuery)) {
-                possible.push([key, value]);
-              }
-              if (possible.length >= 100) {
-                break;
-              }
-              // count += 1;
-            }
-
-            json.possible = possible;
+          if(req.path == "/cpelookup"){
+            var resultsCpeLookup = await this.cache.sqlCpelookup(searchQuery);
           }
-        }
 
+        }
         res.send(json);
         return;
       }

@@ -20,8 +20,9 @@ var RunType = process.env.TYPE;
     console.log(showDataStructure);
 
     await oWebHosting.cache.remoteDBsaving();
-  
+    console.log("Done restart");
   }else if(RunType == "DATABASE"){
+    await oWebHosting.blankObjCollector();
     await oWebHosting.startHosting();
   }else{
     await oWebHosting.buildCache();

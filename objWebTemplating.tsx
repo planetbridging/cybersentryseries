@@ -75,21 +75,30 @@ export class objWebTemplating extends React.Component {
           <a class="item" href="/cpesearch">
             cpelookup
           </a>
-          <a class="item" href="/cvesearch">
-            cvelookup
-          </a>
-          <a class="item">bewear</a>
-          <a class="item">go get galaxy</a>
+        
+          
         </div>
         <div class="main content scrollable">
           <div class="contentPg">{content}</div>
         </div>
-        <div class="ui bottom fixed menu inverted">
-          <a class="item">Features</a>
-          <a class="item">Testimonials</a>
-          <a class="item">Sign-in</a>
-        </div>
+      
       </body>
     );
   }
 }
+
+
+/*<a class="item">bewear</a>
+          <a class="item">go get galaxy</a>
+          
+            <a class="item" href="/cvesearch">
+            cvelookup
+          </a>
+          
+            <div class="ui bottom fixed menu inverted">
+          <a class="item">Features</a>
+          <a class="item">Testimonials</a>
+          <a class="item">Sign-in</a>
+        </div>
+          
+          */

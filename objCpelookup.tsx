@@ -45,6 +45,7 @@ class objCpeLookup extends React.Component {
     ));
   }
 
+  /*htmx implementation
   renderPossibleCards(possible) {
     return possible.map((item, index) => (
       <div key={index} className="card">
@@ -66,7 +67,30 @@ class objCpeLookup extends React.Component {
         </div>
       </div>
     ));
+  }*/
+
+  renderPossibleCards(possible) {
+    return possible.map((item, index) => (
+      <div key={index} className="card">
+        <div className="content">
+          <a
+            href={"/cpesearch?search=" + item[0]}
+            class="ui primary button"
+          >
+            {item[0]}
+          </a>
+          <div className="description">
+            <div className="ui cards">
+              {this.renderPossibleCveCards(item[1])}
+            </div>
+          </div>
+        </div>
+      </div>
+    ));
   }
+  
+  
+  
 
   getUniqCategories(found) {
     var lstUniqCategories = new Map();
@@ -239,7 +263,7 @@ class objCpeLookup extends React.Component {
               id="search-input-cpelookup"
               className="prompt"
               type="text"
-              placeholder="Search..."
+              placeholder="o:microsoft:windows_7:sp1"
               name="search"
               hx-get="/cpesearchresults"
               hx-trigger="click from:#search-button-cpelookup"

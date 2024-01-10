@@ -204,11 +204,35 @@ class objSql {
     return new Promise(function (resolve, reject) {
       con.query(
         {
-          sql: "SELECT * FROM ?? WHERE ?? = ? limit 100",
+          sql: "SELECT * FROM ?? WHERE ?? = ? limit 1000",
           timeout: timeOut, // 40s
         },
         [tblName, column, item],
         function (error, results, fields) {
+          resolve(results);
+        }
+      );
+    });
+  }
+
+  selectDbIn(items, tblName, column) {
+    var con = this.connection;
+    var timeOut = this.timeout;
+
+    // Create a placeholders string with the same number of placeholders as items in the array
+    const placeholders = items.map(() => "?").join(", ");
+
+    return new Promise(function (resolve, reject) {
+      con.query(
+        {
+          sql: `SELECT * FROM ?? WHERE ?? IN (${placeholders}) LIMIT 1000`,
+          timeout: timeOut, // 40s
+        },
+        [tblName, column, ...items], // Spread the items array into the query parameters
+        function (error, results, fields) {
+          if (error) {
+            return reject(error);
+          }
           resolve(results);
         }
       );

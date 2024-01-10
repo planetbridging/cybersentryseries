@@ -16,6 +16,36 @@ export class objCollector {
     this.testForDatabaseConnection();
   }
 
+  async simpleSelect(input,col,tbl){
+    var lstTmpSearch = await this.oSql.selectDb(
+      input, tbl, col
+    );
+    console.log("lstTmpSearch",lstTmpSearch);
+    return lstTmpSearch;
+  }
+
+  async sqlCpelookup(searchQuery){
+    var resultsCpeLookup = await this.oSql.selectDb(
+      searchQuery, "lstUniqCpe", "uniqCpe"
+    );
+    
+   
+
+    if(resultsCpeLookup.length == 1){
+      if(resultsCpeLookup[0].data.length > 0){
+        console.log(resultsCpeLookup);
+
+        var resultsMultiSearchSploitCveLookup = await this.oSql.selectDbIn(
+          resultsCpeLookup[0].data, "lstCveToSearchsploit", "cveToSearchsploit"
+        );
+        console.log(resultsMultiSearchSploitCveLookup);
+      }
+     
+    }
+
+    return {};
+  }
+
   getFirstItemOfAllMaps() {
     let firstItems = {};
 
@@ -37,7 +67,7 @@ export class objCollector {
 
   testForDatabaseConnection(){
     try{
-      this.oSql = new oMysql.objSql(this.DBLocation, this.DBUN, this.DBPASSWORD, true, this.DBNAME);
+      this.oSql = new oMysql.objSql(this.DBLocation, this.DBUN, this.DBPASSWORD, false, this.DBNAME);
       console.log("Connected to database",this.DBNAME);
     }catch(ex){
       console.log("Unable to connect to database",ex);
@@ -49,7 +79,7 @@ export class objCollector {
     var j = {};
     j["lstCve"] = this.lstCve.size;
     j["lstUniqCpe"] = this.lstUniqCpe.size;
-    j["lstCpeToCve"] = this.lstCpeToCve.size;
+    //j["lstCpeToCve"] = this.lstCpeToCve.size;
     j["lstSearchsploit"] = this.lstSearchsploit.size;
     j["lstCveToSearchsploit"] = this.lstCveToSearchsploit.size;
     j["lstCveToMetasploit"] = this.lstCveToMetasploit.size;
@@ -137,7 +167,7 @@ export class objCollector {
         ON ucc.cve COLLATE utf8mb4_unicode_ci = vcts.cveID COLLATE utf8mb4_unicode_ci;
     `;
 
-    if(!lstDb.includes("view_CveToSearchsploit")){
+    /*if(!lstDb.includes("view_CveToSearchsploit")){
       await this.oSql.randomSql(
         cveSearchsploit
       );
@@ -147,14 +177,14 @@ export class objCollector {
       await this.oSql.randomSql(
         uniqCpeCve
       );
-    }
+    }*/
 
     //doesnt work, json to slow :(
-    if(!lstDb.includes("view_CpeCveSearchsploitDetails")){
-      await this.oSql.randomSql(
-        CpeCveSearchsploitDetails
-      );
-    }
+    //if(!lstDb.includes("view_CpeCveSearchsploitDetails")){
+    // await this.oSql.randomSql(
+    //   CpeCveSearchsploitDetails
+    //  );
+    //}
   }
 
   async bulkSave(name, subname, lst) {

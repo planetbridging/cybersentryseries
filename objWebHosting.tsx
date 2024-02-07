@@ -5,8 +5,8 @@ const path = require("path");
 const app = express();
 const methodOverride = require("method-override");
 const mime = require("mime");
-var ReactDOMServer = require("react-dom/server");
-const React = require("react");
+//var ReactDOMServer = require("react-dom/server");
+//const React = require("react");
 
 import { objDownloadManager } from "./objDownloadManager";
 import { objWebTemplating } from "./objWebTemplating";

@@ -166,6 +166,7 @@ class objMongoDatabase {
       .hasNext();
     if (collectionExists) {
       console.log(`Collection ${collectionName} already exists.`);
+      return;
     } else {
       console.log(`Collection ${collectionName} is new.`);
     }
@@ -177,10 +178,23 @@ class objMongoDatabase {
         // Optionally, add a key field if your items don't have one:
         // const document = { _id: key, ...value };
 
-        const result = await collection.insertOne(value);
+        let document = {}; // Empty document object
+
+        if (Array.isArray(value)) {
+          document.lst = value; // If an array, store it within the 'lst' field
+          document.key = key; // If an array, store it within the 'lst' field
+        } else {
+          //document = value; //  If not an array, it can be inserted directly
+          document[key] = value;
+        }
+
+        const result = await collection.insertOne(document);
+
         console.log(`Item inserted with key: ${key}`);
       } catch (error) {
         console.error(`Error inserting item with key ${key}:`, error);
+        console.log("Value to key:", key);
+        console.log("Value to insert:", value);
       }
     }
   }

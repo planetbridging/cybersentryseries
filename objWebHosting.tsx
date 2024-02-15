@@ -24,9 +24,8 @@ export class objWebHosting {
     this.oPdfGen = new objPdfGenerator();
     this.port = port;
   }
-  
 
-  async blankObjCollector(){
+  async blankObjCollector() {
     this.cache = new objCollector.objCollector();
     this.blankSetup = true;
   }
@@ -146,17 +145,15 @@ export class objWebHosting {
           pageFound = true;
           content = await oWebTemplate.renderCvelookup(req.query.search, true);
           break;
-          case "/cvesearchresults":
-            pageFound = true;
+        case "/cvesearchresults":
+          pageFound = true;
           pageWrapper = false;
-            content = await oWebTemplate.renderCvelookup(req.query.search, false);
-            break;
-          
+          content = await oWebTemplate.renderCvelookup(req.query.search, false);
+          break;
       }
 
       if (tmpCache != null) {
-          if(tmpCache.size > 0){
-          
+        if (tmpCache.size > 0) {
           var json = {
             path: req.path,
             search: "",
@@ -199,10 +196,9 @@ export class objWebHosting {
           res.send(json);
           return;
         }
-      } 
+      }
 
-      if(this.blankSetup){
-
+      if (this.blankSetup) {
         var json = {
           path: req.path,
           search: "",
@@ -211,14 +207,12 @@ export class objWebHosting {
         };
 
         if (req.query.search) {
-          
           const searchQuery = req.query.search;
           json.search = searchQuery;
 
-          if(req.path == "/cpelookup"){
+          if (req.path == "/cpelookup") {
             var resultsCpeLookup = await this.cache.sqlCpelookup(searchQuery);
           }
-
         }
         res.send(json);
         return;

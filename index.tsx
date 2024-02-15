@@ -2,17 +2,15 @@
 
 import { objWebHosting } from "./objWebHosting";
 
-var RunType = process.env.TYPE; 
-
+var RunType = process.env.TYPE;
 
 (async () => {
-  console.log("welcome to planetbridging");
-  console.log("RunType",RunType);
+  console.log("welcome to the bewear project");
+  console.log("RunType", RunType);
 
   var oWebHosting = new objWebHosting(8123);
 
-
-  if(RunType == "BUILDDATABASE"){
+  if (RunType == "BUILDDATABASE") {
     await oWebHosting.buildCache();
     var showDataStructure = oWebHosting.cache.getFirstItemOfAllMaps();
 
@@ -21,13 +19,17 @@ var RunType = process.env.TYPE;
 
     await oWebHosting.cache.remoteDBsaving();
     console.log("Done restart");
-  }else if(RunType == "DATABASE"){
+  } else if (RunType == "DATABASE") {
     await oWebHosting.blankObjCollector();
     await oWebHosting.startHosting();
-  }else{
+  } else if (RunType == "MONGODATABASE") {
+    console.log("inserting data into mongo db");
+    await oWebHosting.blankObjCollector();
+    await oWebHosting.cache.testForMongoDatabaseConnection();
+    // await oWebHosting.startHosting();
+  } else {
+    console.log("running default setup");
     await oWebHosting.buildCache();
     await oWebHosting.startHosting();
   }
-  
-  
 })();

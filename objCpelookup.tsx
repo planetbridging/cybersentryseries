@@ -73,10 +73,7 @@ class objCpeLookup extends React.Component {
     return possible.map((item, index) => (
       <div key={index} className="card">
         <div className="content">
-          <a
-            href={"/cpesearch?search=" + item[0]}
-            class="ui primary button"
-          >
+          <a href={"/cpesearch?search=" + item[0]} class="ui primary button">
             {item[0]}
           </a>
           <div className="description">
@@ -88,9 +85,6 @@ class objCpeLookup extends React.Component {
       </div>
     ));
   }
-  
-  
-  
 
   getUniqCategories(found) {
     var lstUniqCategories = new Map();

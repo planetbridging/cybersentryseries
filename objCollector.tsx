@@ -1,4 +1,5 @@
 const oMysql = require("./objMysql");
+const oMongo = require("./objMongoDatabase");
 
 export class objCollector {
   constructor() {
@@ -13,34 +14,68 @@ export class objCollector {
     this.DBNAME = process.env.DBNAME;
     this.DBUN = process.env.DBUN;
     this.DBPASSWORD = process.env.DBPASSWORD;
-    this.testForDatabaseConnection();
+
+    this.MDBUN = process.env.MDBUN;
+    this.MDBPWD = process.env.MDBPWD;
+    this.MDBName = process.env.MDBName;
+    this.MDBURL = process.env.MDBURL;
+
+    //this.testForDatabaseConnection();
+    //this.testForMongoDatabaseConnection();
   }
 
-  async simpleSelect(input,col,tbl){
-    var lstTmpSearch = await this.oSql.selectDb(
-      input, tbl, col
-    );
-    console.log("lstTmpSearch",lstTmpSearch);
+  async testForMongoDatabaseConnection() {
+    try {
+      this.oMon = new oMongo.objMongoDatabase(
+        this.MDBURL,
+        this.MDBName,
+        this.MDBUN,
+        this.MDBPWD
+      );
+      console.log("Connected to mongo database", this.MDBName);
+      //await this.testingInsertMongo();
+      //await this.testingInsertMongo();
+    } catch (ex) {
+      console.log("Unable to connect to database", ex);
+      this.oMon = null;
+    }
+  }
+
+  async testingInsertMongo() {
+    const newDocument = { name: "John Doe", age: 30 };
+    await this.oMon
+      .insertDocument("users", newDocument)
+      .then((result) => console.log("Document inserted:", result))
+      .catch((error) => console.error("Error inserting:", error));
+
+    var testInsert = await this.oMon.findFirstInEachCollection();
+    console.log(testInsert);
+  }
+
+  async simpleSelect(input, col, tbl) {
+    var lstTmpSearch = await this.oSql.selectDb(input, tbl, col);
+    console.log("lstTmpSearch", lstTmpSearch);
     return lstTmpSearch;
   }
 
-  async sqlCpelookup(searchQuery){
+  async sqlCpelookup(searchQuery) {
     var resultsCpeLookup = await this.oSql.selectDb(
-      searchQuery, "lstUniqCpe", "uniqCpe"
+      searchQuery,
+      "lstUniqCpe",
+      "uniqCpe"
     );
-    
-   
 
-    if(resultsCpeLookup.length == 1){
-      if(resultsCpeLookup[0].data.length > 0){
+    if (resultsCpeLookup.length == 1) {
+      if (resultsCpeLookup[0].data.length > 0) {
         console.log(resultsCpeLookup);
 
         var resultsMultiSearchSploitCveLookup = await this.oSql.selectDbIn(
-          resultsCpeLookup[0].data, "lstCveToSearchsploit", "cveToSearchsploit"
+          resultsCpeLookup[0].data,
+          "lstCveToSearchsploit",
+          "cveToSearchsploit"
         );
         console.log(resultsMultiSearchSploitCveLookup);
       }
-     
     }
 
     return {};
@@ -59,18 +94,26 @@ export class objCollector {
     firstItems["lstUniqCpe"] = getFirstItem(this.lstUniqCpe);
     firstItems["lstCpeToCve"] = getFirstItem(this.lstCpeToCve);
     firstItems["lstSearchsploit"] = getFirstItem(this.lstSearchsploit);
-    firstItems["lstCveToSearchsploit"] = getFirstItem(this.lstCveToSearchsploit);
+    firstItems["lstCveToSearchsploit"] = getFirstItem(
+      this.lstCveToSearchsploit
+    );
     firstItems["lstCveToMetasploit"] = getFirstItem(this.lstCveToMetasploit);
 
     return firstItems;
   }
 
-  testForDatabaseConnection(){
-    try{
-      this.oSql = new oMysql.objSql(this.DBLocation, this.DBUN, this.DBPASSWORD, false, this.DBNAME);
-      console.log("Connected to database",this.DBNAME);
-    }catch(ex){
-      console.log("Unable to connect to database",ex);
+  testForDatabaseConnection() {
+    try {
+      this.oSql = new oMysql.objSql(
+        this.DBLocation,
+        this.DBUN,
+        this.DBPASSWORD,
+        false,
+        this.DBNAME
+      );
+      console.log("Connected to database", this.DBNAME);
+    } catch (ex) {
+      console.log("Unable to connect to database", ex);
       this.oSql = null;
     }
   }
@@ -85,7 +128,6 @@ export class objCollector {
     j["lstCveToMetasploit"] = this.lstCveToMetasploit.size;
     return j;
   }
-  
 
   async remoteDBsaving() {
     //MYSQL_CLIENT_SSL
@@ -95,37 +137,43 @@ export class objCollector {
     var lstDb = await this.oSql.getLstTbl("bewear");
     console.log(lstDb);
 
-
-
-    if(!lstDb.includes("lstCve")){
+    if (!lstDb.includes("lstCve")) {
       console.log("uploading lstCve");
       await this.bulkSave(`lstCve`, `cve`, this.lstCve);
     }
 
-    if(!lstDb.includes("lstUniqCpe")){
+    if (!lstDb.includes("lstUniqCpe")) {
       console.log("uploading lstUniqCpe");
       await this.bulkSave(`lstUniqCpe`, `uniqCpe`, this.lstUniqCpe);
     }
 
-    if(!lstDb.includes("lstSearchsploit")){
+    if (!lstDb.includes("lstSearchsploit")) {
       console.log("uploading lstSearchsploit");
-      await this.bulkSave(`lstSearchsploit`, `searchsploit`, this.lstSearchsploit);
+      await this.bulkSave(
+        `lstSearchsploit`,
+        `searchsploit`,
+        this.lstSearchsploit
+      );
     }
 
-    if(!lstDb.includes("lstCveToSearchsploit")){
+    if (!lstDb.includes("lstCveToSearchsploit")) {
       console.log("uploading lstCveToSearchsploit");
-      await this.bulkSave(`lstCveToSearchsploit`, `cveToSearchsploit`, this.lstCveToSearchsploit);
+      await this.bulkSave(
+        `lstCveToSearchsploit`,
+        `cveToSearchsploit`,
+        this.lstCveToSearchsploit
+      );
     }
 
     //if(!lstDb.includes("lstCveToMetasploit")){
-      //console.log("uploading lstCveToMetasploit");
-      //await this.bulkSave(`lstCveToMetasploit`, `cveToMetasploit`, this.lstCveToMetasploit);
+    //console.log("uploading lstCveToMetasploit");
+    //await this.bulkSave(`lstCveToMetasploit`, `cveToMetasploit`, this.lstCveToMetasploit);
     //}
     //console.log(this.lstCveToMetasploit);
     await this.createViews(lstDb);
   }
 
-  async createViews(lstDb){
+  async createViews(lstDb) {
     var cveSearchsploit = `CREATE VIEW view_CveToSearchsploit AS
     SELECT 
         lstCve.cve AS cveID, 
@@ -137,7 +185,6 @@ export class objCollector {
         lstCveToSearchsploit 
         ON lstCve.cve = lstCveToSearchsploit.cveToSearchsploit;
     `;
-
 
     var uniqCpeCve = `CREATE VIEW view_UniqCpeCve AS
     SELECT
@@ -152,7 +199,6 @@ export class objCollector {
         )
     ) AS cveList;
     `;
-
 
     var CpeCveSearchsploitDetails = `CREATE VIEW view_CpeCveSearchsploitDetails AS
     SELECT 
@@ -188,46 +234,46 @@ export class objCollector {
   }
 
   async bulkSave(name, subname, lst) {
-    var query = `CREATE TABLE IF NOT EXISTS ` +
-          name +
-          ` (
+    var query =
+      `CREATE TABLE IF NOT EXISTS ` +
+      name +
+      ` (
         id INT AUTO_INCREMENT PRIMARY KEY,
         ` +
-          subname +
-          ` VARCHAR(255) NOT NULL,
+      subname +
+      ` VARCHAR(255) NOT NULL,
         data JSON,
         UNIQUE INDEX ` +
-          subname +
-          `_index (` +
-          subname +
-          `)
+      subname +
+      `_index (` +
+      subname +
+      `)
       );`;
-      console.log(query);
-    var resp = await this.oSql.randomSql(
-      query
-    );
+    console.log(query);
+    var resp = await this.oSql.randomSql(query);
 
     console.log(resp);
-  
+
     await this.bulkInsetLst(name, subname, lst);
   }
 
   async bulkInsetLst(name, subname, lst) {
-    var lstFromDb = await this.oSql.randomSql(`SELECT ` + subname + ` from ` + name);
+    var lstFromDb = await this.oSql.randomSql(
+      `SELECT ` + subname + ` from ` + name
+    );
     const tmpMap = new Map();
-  
+
     // Insert each cve value into the Map
     lstFromDb.forEach((row) => {
       tmpMap.set(row[subname]); // Setting the value to 'true' for each key
     });
-  
+
     for (let [key, value] of lst) {
       console.log(`Key: ${key}`);
-      if (!tmpMap.has(key)) {``
+      if (!tmpMap.has(key)) {
+        ``;
 
-      
-      
-      await this.oSql.randomSql(
+        await this.oSql.randomSql(
           `INSERT INTO ` +
             name +
             ` (` +

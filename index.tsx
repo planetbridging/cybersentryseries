@@ -22,11 +22,11 @@ var RunType = process.env.TYPE;
   } else if (RunType == "DATABASE") {
     await oWebHosting.blankObjCollector();
     await oWebHosting.startHosting();
-  } else if (RunType == "MONGODATABASE") {
+  } else if (RunType == "BUILDMONGODATABASE") {
     console.log("inserting data into mongo db");
-    await oWebHosting.blankObjCollector();
+    await oWebHosting.buildCache();
     await oWebHosting.cache.testForMongoDatabaseConnection();
-    // await oWebHosting.startHosting();
+    await oWebHosting.cache.bulkInsertIntoMongo();
   } else {
     console.log("running default setup");
     await oWebHosting.buildCache();

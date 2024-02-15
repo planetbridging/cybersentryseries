@@ -113,6 +113,77 @@ class objMongoDatabase {
     const sizeInMB = stats.storageSize / (1024 * 1024);
     return sizeInMB;
   }
+
+  async getCollectionSizes() {
+    const db = await this.connect();
+    const collections = await db.listCollections().toArray();
+
+    const collectionSizes = await Promise.all(
+      collections.map(async (collectionInfo) => {
+        const stats = await db.stats({
+          scale: 1024 * 1024,
+          collName: collectionInfo.name,
+        }); // Call stats on the db object
+        return {
+          name: collectionInfo.name,
+          sizeInMB: stats.storageSize / (1024 * 1024),
+        };
+      })
+    );
+
+    return collectionSizes;
+  }
+
+  async insertMap(collectionName, mapData) {
+    console.log("bulk map insert", collectionName);
+    //console.log(mapData);
+    const db = await this.connect();
+
+    // Check if the collection exists
+    const collectionExists = await db
+      .listCollections({ name: collectionName })
+      .hasNext();
+    if (collectionExists) {
+      console.log(
+        `Collection ${collectionName} already exists. Skipping insert.`
+      );
+      return; // Skip the insertion
+    }
+
+    // Proceed with the original insert logic since the collection is new
+    const collection = db.collection(collectionName);
+    const result = await collection.insertOne(Object.fromEntries(mapData));
+    return result;
+  }
+
+  async insertMapItemsIndividually(collectionName, mapData) {
+    console.log("Inserting items individually into:", collectionName);
+    const db = await this.connect();
+
+    // Check for collection existence (you can reuse your existing logic here)
+    const collectionExists = await db
+      .listCollections({ name: collectionName })
+      .hasNext();
+    if (collectionExists) {
+      console.log(`Collection ${collectionName} already exists.`);
+    } else {
+      console.log(`Collection ${collectionName} is new.`);
+    }
+
+    const collection = db.collection(collectionName);
+
+    for (const [key, value] of mapData.entries()) {
+      try {
+        // Optionally, add a key field if your items don't have one:
+        // const document = { _id: key, ...value };
+
+        const result = await collection.insertOne(value);
+        console.log(`Item inserted with key: ${key}`);
+      } catch (error) {
+        console.error(`Error inserting item with key ${key}:`, error);
+      }
+    }
+  }
 }
 
 module.exports = {

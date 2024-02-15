@@ -33,12 +33,38 @@ export class objCollector {
         this.MDBPWD
       );
       console.log("Connected to mongo database", this.MDBName);
+
       //await this.testingInsertMongo();
       //await this.testingInsertMongo();
+      //await this.oMon.getDatabaseSize();
+
+      var showDBSTATS = await this.oMon.getCollectionSizes();
+      console.log(showDBSTATS);
     } catch (ex) {
       console.log("Unable to connect to database", ex);
       this.oMon = null;
     }
+  }
+
+  async bulkInsertIntoMongo() {
+    await this.oMon.insertMapItemsIndividually("lstCve", this.lstCve);
+    await this.oMon.insertMapItemsIndividually("lstUniqCpe", this.lstUniqCpe);
+    await this.oMon.insertMapItemsIndividually("lstCpeToCve", this.lstCpeToCve);
+    await this.oMon.insertMapItemsIndividually(
+      "lstSearchsploit",
+      this.lstSearchsploit
+    );
+    await this.oMon.insertMapItemsIndividually(
+      "lstCveToSearchsploit",
+      this.lstCveToSearchsploit
+    );
+    await this.oMon.insertMapItemsIndividually(
+      "lstCveToMetasploit",
+      this.lstCveToMetasploit
+    );
+
+    var exampleOfOneOfEach = await this.oMon.findFirstInEachCollection();
+    console.log(exampleOfOneOfEach);
   }
 
   async testingInsertMongo() {

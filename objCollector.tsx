@@ -24,6 +24,36 @@ export class objCollector {
     //this.testForMongoDatabaseConnection();
   }
 
+  async searchCpe(value) {
+    var found = await this.oMon.searchKeyContain("lstUniqCpe", "key", value);
+
+    if (found.length == 1) {
+      var lstCve = await this.oMon.getDocumentsByKeyValues(
+        "lstCve",
+        "key",
+        found[0].lst
+      );
+      var lstCveToSearchsploit = await this.oMon.getDocumentsByKeyValues(
+        "lstCveToSearchsploit",
+        "key",
+        found[0].lst
+      );
+
+      var lstCveToMetasploit = await this.oMon.getDocumentsByKeyValues(
+        "lstCveToMetasploit",
+        "key",
+        found[0].lst
+      );
+      return {
+        lstCve: lstCve,
+        lstCveToSearchsploit: lstCveToSearchsploit,
+        lstCveToMetasploit: lstCveToMetasploit,
+      };
+    }
+
+    return { found: found };
+  }
+
   async testForMongoDatabaseConnection() {
     try {
       this.oMon = new oMongo.objMongoDatabase(

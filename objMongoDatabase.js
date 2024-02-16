@@ -185,7 +185,8 @@ class objMongoDatabase {
           document.key = key; // If an array, store it within the 'lst' field
         } else {
           //document = value; //  If not an array, it can be inserted directly
-          document[key] = value;
+          document.key = key;
+          document.value = value;
         }
 
         const result = await collection.insertOne(document);
@@ -197,6 +198,63 @@ class objMongoDatabase {
         console.log("Value to insert:", value);
       }
     }
+  }
+
+  async searchKeyContain(collectionName, key, value, limit = 10) {
+    const db = await this.connect();
+    const collection = db.collection(collectionName);
+
+    // Construct query using a regular expression within a template literal
+    const searchQuery = { [key]: { $regex: `^${value}`, $options: "i" } };
+
+    const results = await collection.find(searchQuery).limit(limit).toArray();
+    return results;
+  }
+
+  async searchByKeyValue(collectionName, key, value, limit = 10) {
+    const db = await this.connect();
+    const collection = db.collection(collectionName);
+
+    const searchQuery = { [key]: value };
+
+    // Execute the search using find and limit
+    const results = await collection.find(searchQuery).limit(limit).toArray();
+
+    return results;
+  }
+
+  async getDocumentsByKeyValues(collectionName, key, valuesList) {
+    const db = await this.connect();
+    const collection = db.collection(collectionName);
+
+    // Build the query to find documents with the specified key matching any of the values in the list
+    const query = {
+      [key]: { $in: valuesList },
+    };
+
+    // Retrieve the matching documents
+    const documents = await collection.find(query).toArray();
+
+    return documents;
+  }
+
+  async searchByKeyValueContain(collectionName, value, limit = 10) {
+    const db = await this.connect();
+    const collection = db.collection(collectionName);
+
+    // Construct the regular expression
+    const searchRegex = new RegExp(value, "i");
+
+    // Build the filtering function (only checks top-level keys)
+    const filterFunction = function () {
+      return Object.keys(this).some((key) => searchRegex.test(key));
+    };
+
+    // Use $where operator with the filtering function
+    const searchQuery = { $where: filterFunction };
+
+    const results = await collection.find(searchQuery).limit(limit).toArray();
+    return results;
   }
 }
 

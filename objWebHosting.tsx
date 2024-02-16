@@ -202,16 +202,22 @@ export class objWebHosting {
         var json = {
           path: req.path,
           search: "",
-          found: "",
-          possible: [],
         };
+
+        var found = {};
 
         if (req.query.search) {
           const searchQuery = req.query.search;
           json.search = searchQuery;
 
           if (req.path == "/cpelookup") {
-            var resultsCpeLookup = await this.cache.sqlCpelookup(searchQuery);
+            found = await this.cache.searchCpe(searchQuery);
+            //var resultsCpeLookup = await this.cache.sqlCpelookup(searchQuery);
+          }
+
+          const keys = Object.keys(found);
+          for (const key of keys) {
+            json[key] = found[key];
           }
         }
         res.send(json);

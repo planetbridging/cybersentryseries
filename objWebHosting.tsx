@@ -212,7 +212,20 @@ export class objWebHosting {
 
           if (req.path == "/cpelookup") {
             found = await this.cache.searchCpe(searchQuery);
-            //var resultsCpeLookup = await this.cache.sqlCpelookup(searchQuery);
+          } else if (req.path == "/cvelookup") {
+            found = await this.cache.searchDyn("lstCve", searchQuery);
+          } else if (req.path == "/cve2searchsploit") {
+            found = await this.cache.searchDyn(
+              "lstCveToSearchsploit",
+              searchQuery
+            );
+          } else if (req.path == "/searchsploit") {
+            found = await this.cache.searchDyn("lstSearchsploit", searchQuery);
+          } else if (req.path == "/cve2metasploit") {
+            found = await this.cache.searchDyn(
+              "lstCveToMetasploit",
+              searchQuery
+            );
           }
 
           const keys = Object.keys(found);

@@ -54,6 +54,12 @@ export class objCollector {
     return { found: found };
   }
 
+  async searchDyn(collection, value) {
+    var found = await this.oMon.searchKeyContain(collection, "key", value);
+
+    return { found: found };
+  }
+
   async testForMongoDatabaseConnection() {
     try {
       this.oMon = new oMongo.objMongoDatabase(

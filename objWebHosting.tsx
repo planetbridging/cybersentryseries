@@ -5,6 +5,8 @@ const path = require("path");
 const app = express();
 const methodOverride = require("method-override");
 const mime = require("mime");
+const http = require("http");
+const io = require("socket.io")(http);
 //var ReactDOMServer = require("react-dom/server");
 //const React = require("react");
 
@@ -54,6 +56,38 @@ export class objWebHosting {
 
     app.listen(this.port, () => {
       console.log("Server is running on port " + this.port);
+    });
+  }
+
+  async startWebSocket() {
+    const port = 8124; // Or any other port you wish to use
+    const server = http.createServer(); // Create the HTTP server
+    io.attach(server); // Attach Socket.IO to the server
+
+    server.listen(port, () => {
+      // Have the server listen on the port
+      console.log(`WebSocket server listening on port ${port}`);
+    });
+
+    var mainThread = this;
+
+    io.on("connection", async (socket) => {
+      console.log("A user connected");
+
+      socket.on("chat message", (msg) => {
+        console.log("Message: ", msg);
+        io.emit("chat message", msg);
+      });
+
+      socket.on("cpelookup", async (msg) => {
+        var json = await mainThread.searchMongo(msg, "/cpelookup");
+        const jsonString = JSON.stringify(json);
+        io.emit("cpelookup", jsonString);
+      });
+
+      socket.on("disconnect", () => {
+        console.log("A user disconnected");
+      });
     });
   }
 
@@ -273,6 +307,37 @@ export class objWebHosting {
         return;
       }
     });
+  }
+
+  async searchMongo(searchQuery, reqPath) {
+    var json = {
+      path: reqPath,
+      search: "",
+    };
+
+    var found = {};
+
+    if (searchQuery) {
+      json.search = searchQuery;
+
+      if (reqPath == "/cpelookup") {
+        found = await this.cache.searchCpe(searchQuery);
+      } else if (reqPath == "/cvelookup") {
+        found = await this.cache.searchDyn("lstCve", searchQuery);
+      } else if (reqPath == "/cve2searchsploit") {
+        found = await this.cache.searchDyn("lstCveToSearchsploit", searchQuery);
+      } else if (reqPath == "/searchsploit") {
+        found = await this.cache.searchDyn("lstSearchsploit", searchQuery);
+      } else if (reqPath == "/cve2metasploit") {
+        found = await this.cache.searchDyn("lstCveToMetasploit", searchQuery);
+      }
+
+      const keys = Object.keys(found);
+      for (const key of keys) {
+        json[key] = found[key];
+      }
+    }
+    return json;
   }
 
   getCve(cve) {

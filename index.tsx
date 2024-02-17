@@ -22,6 +22,7 @@ var RunType = process.env.TYPE;
   } else if (RunType == "MONGODATABASE") {
     await oWebHosting.blankObjCollector();
     await oWebHosting.cache.testForMongoDatabaseConnection();
+    await oWebHosting.startWebSocket();
     await oWebHosting.startHosting();
   } else if (RunType == "BUILDMONGODATABASE") {
     console.log("inserting data into mongo db");

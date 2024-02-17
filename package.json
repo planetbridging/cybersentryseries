@@ -19,6 +19,7 @@
     "node-json2html": "^2.2.3",
     "pdfkit-table": "^0.1.99",
     "react-dom": "^18.2.0",
+    "socket.io": "^4.7.4",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {

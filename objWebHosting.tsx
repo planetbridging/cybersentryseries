@@ -79,15 +79,23 @@ export class objWebHosting {
         io.emit("chat message", msg);
       });
 
-      socket.on("cpelookup", async (msg) => {
-        var json = await mainThread.searchMongo(msg, "/cpelookup");
-        const jsonString = JSON.stringify(json);
-        io.emit("cpelookup", jsonString);
-      });
+      mainThread.dynWebSocket(socket, "cpelookup");
+      mainThread.dynWebSocket(socket, "cvelookup");
+      mainThread.dynWebSocket(socket, "cve2searchsploit");
+      mainThread.dynWebSocket(socket, "searchsploit");
+      mainThread.dynWebSocket(socket, "cve2metasploit");
 
       socket.on("disconnect", () => {
         console.log("A user disconnected");
       });
+    });
+  }
+
+  async dynWebSocket(socket, channel) {
+    socket.on(channel, async (msg) => {
+      var json = await this.searchMongo(msg, "/" + channel);
+      const jsonString = JSON.stringify(json);
+      io.emit(channel, jsonString);
     });
   }
 

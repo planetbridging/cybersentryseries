@@ -14,6 +14,7 @@ COPY ./ /app/
 
 # Expose the port your application will run on
 EXPOSE 8123
+EXPOSE 8124
 
 # Command to run your application
 CMD ["bun", "run","index.tsx"]

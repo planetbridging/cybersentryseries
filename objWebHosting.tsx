@@ -61,10 +61,10 @@ export class objWebHosting {
 
   async startWebSocket() {
     const port = 8124; // Or any other port you wish to use
-    const server = http.createServer(); // Create the HTTP server
-    io.attach(server); // Attach Socket.IO to the server
+    this.server = http.createServer(); // Create the HTTP server
+    io.attach(this.server); // Attach Socket.IO to the server
 
-    server.listen(port, () => {
+    this.server.listen(port, () => {
       // Have the server listen on the port
       console.log(`WebSocket server listening on port ${port}`);
     });

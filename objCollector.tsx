@@ -54,6 +54,11 @@ export class objCollector {
     return { found: found };
   }
 
+  async searchCve(data) {
+    console.log(data);
+    return data;
+  }
+
   async searchDyn(collection, value) {
     var found = await this.oMon.searchKeyContain(collection, "key", value);
 

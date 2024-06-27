@@ -10,10 +10,18 @@ class objCveView extends React.Component {
     }
 
     const { baseMetricV2, description, lstCpe, categories, cve: cveId } = cve;
-
+    //console.log(categories);
     return (
       <div className="ui container">
-        {cveId && <h2 className="ui header">{cveId}</h2>}
+        {cveId && (
+          <a
+            href={"/cvesearch?search=" + cveId}
+            target="_blank"
+            className="ui header"
+          >
+            <h2>{cveId}</h2>
+          </a>
+        )}
         {categories.length > 0 ? categories.join(", ") : "None"}
       </div>
     );

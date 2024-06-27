@@ -3,7 +3,7 @@ import React from "react";
 
 import objCveView from "./objCveView";
 import { objSemanticBuilder } from "./objSemanticBuilder";
-
+//o:microsoft:windows_7:sp1
 class objCpeLookup extends React.Component {
   state = {};
 
@@ -176,12 +176,12 @@ class objCpeLookup extends React.Component {
                     {item.exploits.map((exploitId, index) => (
                       <a
                         key={index}
-                        href={`https://www.exploit-db.com/exploits/${exploitId}`}
+                        href={`https://www.exploit-db.com/exploits/${exploitId[0]}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="ui small blue basic label"
                       >
-                        {exploitId}
+                        {exploitId[0]}
                       </a>
                     ))}
                   </div>

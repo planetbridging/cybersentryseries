@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 
 import objCveView from "./objCveView";
+import objCveBulkView from "./objCveBulkView";
 import { objSemanticBuilder } from "./objSemanticBuilder";
 
 class objCvelookup extends React.Component {
@@ -10,23 +11,25 @@ class objCvelookup extends React.Component {
   constructor() {
     super();
     this.oSemaBuilder = new objSemanticBuilder();
+    this.objCveBulkView = new objCveBulkView();
   }
 
   async renderSearchResults(search) {
     //console.log(search);
-    /*var searchResults = await axios.get(
-      "http://localhost:8123/cpelookup?search=" + search
+    var searchResults = await axios.get(
+      "http://localhost:8123/cvelookup?search=" + search
     );
-    var data = searchResults["data"];*/
+    var data = searchResults["data"];
     //console.log(data);
+    var cveBulkViewRender = this.objCveBulkView.render(data);
 
-    return <div id="search-results-cvelookup"></div>;
+    return <div id="search-results-cvelookup">{cveBulkViewRender}</div>;
   }
 
   async render(ssrRender, search) {
     var loadSearchResults = null;
     if (ssrRender) {
-      //loadSearchResults = await this.renderSearchResults(search);
+      loadSearchResults = await this.renderSearchResults(search);
     }
     return (
       <div className="ui container">
@@ -37,7 +40,7 @@ class objCvelookup extends React.Component {
               id="search-input-cvelookup"
               className="prompt"
               type="text"
-              placeholder="Search..."
+              placeholder="CVE-2017-0143"
               name="search"
               hx-get="/cvesearchresults"
               hx-trigger="click from:#search-button-cvelookup"
